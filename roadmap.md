@@ -9,7 +9,7 @@
 * Python doc
 * Swagger API (auto generated if possible)
 * Some tests ~~+ actions~~
-* ~~éUse https://github.com/google/yapf + actions~~
+* ~~Use https://github.com/google/yapf + actions~~
 * ~~Link to Codecov~~
 
 ### API architecture
