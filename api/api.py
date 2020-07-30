@@ -1,11 +1,11 @@
 """
 This module represent transports api methods
 """
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import requests
 
 app = Flask(__name__)
-app.config["DEBUG"] = True
+
 
 # Return transports for a given id or all transports datasets
 # Param name is city
@@ -24,7 +24,8 @@ def get_transports():
         url = '%s/%s/gtfs-rt.json' % (url, city)
 
     response = requests.get(url)
-    return response.json()
+    return jsonify(response.json())
 
 
-app.run()
+if __name__ == '__main__':
+    app.run(debug=True)

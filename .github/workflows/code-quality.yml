@@ -1,4 +1,4 @@
-name: Linting
+name: Code Quality
 
 on: [push]
 
@@ -11,8 +11,17 @@ jobs:
       - uses: ricardochaves/python-lint@v1.1.0
         with:
           use-pylint: true
-          use-pycodestyle: false
+          use-pycodestyle: true
           use-flake8: false
           use-black: false
           use-mypy: false
           use-isort: false
+
+  formatting-check:
+    name: Formatting Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: AlexanderMelde/yapf-action@master
+        with:
+          args: --verbose
