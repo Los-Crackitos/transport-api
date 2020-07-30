@@ -8,9 +8,9 @@
 * Generic method that parse GTFS data
 * Python doc
 * Swagger API (auto generated if possible)
-* Some tests + actions
-* Use https://github.com/google/yapf + actions
-* Link to Codecov
+* Some tests ~~+ actions~~
+* ~~éUse https://github.com/google/yapf + actions~~
+* ~~Link to Codecov~~
 
 ### API architecture
 
