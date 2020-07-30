@@ -20,24 +20,24 @@ GET /{city} -> []transport_type[]type{
 }
 
 GET /{city}/{transport_type} -> []type{
-    ...type_details
+      ...type_details
 }
 
 GET /{city}/{transport_type}/{line} -> {
-    []stop{
-    ...stop_details
-},
-[]type{
-        ...type_details
-}
+      []stop{
+            ...stop_details
+      },
+      []type{
+            ...type_details
+      }
 }
 
 GET /{city}/{transport_type}/{type_id/ref} -> type{
-...type_details
+      ...type_details
 }
 
 GET /{city}/{transport_type}/{stop_id/ref} -> {
-...stop_details
+      ...stop_details
 }
 ```
 
