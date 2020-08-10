@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  api:
+    container_name: "api"
+    image: python:latest
+    environment:
+      FLASK_APP: "api.py"
+      FLASK_ENV: "development"
+    working_dir: "/api"
+    volumes:
+      - ".:/api"
+    entrypoint: ["./entrypoint.sh"]
