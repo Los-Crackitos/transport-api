@@ -29,7 +29,7 @@ class TransportLine(Resource):
         """Fetch all transport type from a given city"""
         url = 'https://tr.transport.data.gouv.fr/%s/gtfs-rt.json' % (city)
         response = requests.get(url)
- 
+
         if response.status_code == 404:
             api.abort(404)
 
@@ -39,7 +39,7 @@ class TransportLine(Resource):
                 if entity['tripUpdate']['vehicle']['id'] == bus:
                     for stopIds in entity['tripUpdate']['stopTimeUpdate']:
                         busStopIdList.append(stopIds['stopId'])
- 
+
         lineRef = ''
         busStopIdsNamesList = []
         for busStopId in busStopIdList:
@@ -55,7 +55,7 @@ class TransportLine(Resource):
                     busStopIdsNamesList.append(monitoredStopVisit['MonitoredVehicleJourney']['MonitoredCall']['StopPointName'])
 
         busLineStopCoordinates = []
-        for busStopName in busStopIdsNamesList: 
+        for busStopName in busStopIdsNamesList:
             flag = False
             for pointName in busLineStopCoordinates:
                 if pointName['pointName'] == busStopName:
@@ -65,7 +65,7 @@ class TransportLine(Resource):
             if flag != True:
                 url = 'https://tr.transport.data.gouv.fr/%s/siri/2.0/stoppoints-discovery.json?q=%s' % (city, busStopName)
                 response = requests.get(url)
-               
+
                 if response.status_code == 404:
                     api.abort(404)
 
@@ -76,7 +76,7 @@ class TransportLine(Resource):
                         'latitude': response.json()['Siri']['StopPointsDelivery']['AnnotatedStopPoint'][0]['Location']['latitude']
                     }
                 })
-        
+
         line = {
             'id': lineRef,
             'stopPoint': busLineStopCoordinates
