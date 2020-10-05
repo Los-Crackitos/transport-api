@@ -20,7 +20,7 @@ line = api.schema_model(
 
 @api.route('/<city>/<bus>')
 @api.param('bus', 'Bus reference id')
-#@api.response(200, line)
+@api.response(200, line)
 @api.response(404, 'Bus not found')
 class TransportLine(Resource):
 
@@ -40,30 +40,47 @@ class TransportLine(Resource):
                     for stopIds in entity['tripUpdate']['stopTimeUpdate']:
                         busStopIdList.append(stopIds['stopId'])
 
-
+        
+        lineRef = ''
         busStopIdsNamesList = []
         for busStopId in busStopIdList:
             url = 'https://tr.transport.data.gouv.fr/%s/siri/2.0/stop-monitoring.json?MonitoringRef=%s' % (city, busStopId)
             response = requests.get(url)
-            
+
             if response.status_code == 404:
                 api.abort(404)
 
             for siri in response.json()['Siri']['ServiceDelivery']['StopMonitoringDelivery']:
                 for monitoredStopVisit in siri['MonitoredStopVisit']:
+                    lineRef = monitoredStopVisit['MonitoredVehicleJourney']['LineRef']
                     busStopIdsNamesList.append(monitoredStopVisit['MonitoredVehicleJourney']['MonitoredCall']['StopPointName'])
 
         busLineStopCoordinates = []
         for busStopName in busStopIdsNamesList: 
-            url = 'https://tr.transport.data.gouv.fr/%s/siri/2.0/stoppoints-discovery.json?q=%s' % (city, busStopName)
-            response = requests.get(url)
+            flag = False
+            for pointName in busLineStopCoordinates:
+                if pointName['pointName'] == busStopName:
+                    busLineStopCoordinates.append(pointName)
+                    flag = True
 
-            if response.status_code == 404:
-                api.abort(404)
+            if flag != True:
+                url = 'https://tr.transport.data.gouv.fr/%s/siri/2.0/stoppoints-discovery.json?q=%s' % (city, busStopName)
+                response = requests.get(url)
+                
+                if response.status_code == 404:
+                    api.abort(404)
 
-            busLineStopCoordinates.append({
-                "longitude": response.json()['Siri']['StopPointsDelivery']['AnnotatedStopPoint'][0]['Location']['longitude'],
-                "latitude": response.json()['Siri']['StopPointsDelivery']['AnnotatedStopPoint'][0]['Location']['latitude']
-            })
-            
-        return busLineStopCoordinates
+                busLineStopCoordinates.append({
+                    'pointName': busStopName,
+                    'pointsCoordinates': {
+                        'longitude': response.json()['Siri']['StopPointsDelivery']['AnnotatedStopPoint'][0]['Location']['longitude'],
+                        'latitude': response.json()['Siri']['StopPointsDelivery']['AnnotatedStopPoint'][0]['Location']['latitude']
+                    }
+                })
+        
+        line = {
+            'id': lineRef,
+            'stopPoint': busLineStopCoordinates
+        }   
+
+        return line
